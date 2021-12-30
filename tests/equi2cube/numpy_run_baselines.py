@@ -27,8 +27,7 @@ IMG_NAME = "test.jpg"
 
 def get_img(dtype: np.dtype = np.dtype(np.float32)):
     path = os.path.join(DATA_ROOT, IMG_NAME)
-    img = load2numpy(path, dtype=dtype, is_cv2=False)
-    return img
+    return load2numpy(path, dtype=dtype, is_cv2=False)
 
 
 def make_batch(img: np.ndarray, bs: int = 1):
@@ -123,7 +122,7 @@ def bench_baselines(
 
     # evaluation depends on the output format
     # - reformat to np.ndarray?
-    if cube_format in ("horizon", "dice"):
+    if cube_format in {"horizon", "dice"}:
         # can be tested as the same before since `out` is np.ndarray
 
         assert out.shape == out_scipy.shape == out_cv2.shape

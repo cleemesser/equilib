@@ -15,31 +15,23 @@ def cube_hsplits(cube_h: np.ndarray) -> List[np.ndarray]:
     # order ["F", "R", "B", "L", "U", "D"]
     splits = np.split(cube_h, 6, axis=-1)  # works batched
     assert len(splits) == 6
-    assert splits[0].shape == (*cube_h.shape[0:3], cube_h.shape[-2])
+    assert splits[0].shape == (*cube_h.shape[:3], cube_h.shape[-2])
     return splits
 
 
 def cube_h2list(cube_h: np.ndarray) -> List[List[np.ndarray]]:
     bs = cube_h.shape[0]
-    cube_lists = []
-    for b in range(bs):
-        cube_lists.append(np.split(cube_h[b], 6, axis=-1))
-    return cube_lists
+    return [np.split(cube_h[b], 6, axis=-1) for b in range(bs)]
 
 
 def cube_h2dict(cube_h: np.ndarray) -> List[Dict[str, np.ndarray]]:
     bs = cube_h.shape[0]
     cube_list = cube_hsplits(cube_h)
 
-    cube_dicts = []
-    for b in range(bs):
-        cube_dicts.append(
-            {
+    return [{
                 k: deepcopy(cube_list[i][b])
                 for i, k in enumerate(["F", "R", "B", "L", "U", "D"])
-            }
-        )
-    return cube_dicts
+            } for b in range(bs)]
 
 
 def cube_h2dice(cube_h: np.ndarray) -> np.ndarray:
@@ -63,11 +55,7 @@ def cube_h2dice(cube_h: np.ndarray) -> np.ndarray:
 
 def matmul(m: np.ndarray, R: np.ndarray, method: str = "faster") -> np.ndarray:
 
-    if method == "robust":
-        # When target image size is smaller, it might be faster with `matmul`
-        # but not by much
-        M = np.matmul(R[:, np.newaxis, np.newaxis, ...], m)
-    elif method == "faster":
+    if method == "faster":
         # `einsum` is probably fastest, but it might not be accurate
         # I've tested it, and it's really close when it is float64,
         # but loses precision for float32
@@ -79,6 +67,10 @@ def matmul(m: np.ndarray, R: np.ndarray, method: str = "faster") -> np.ndarray:
             M[b, ...] = np.einsum(
                 "ik,...kj->...ij", R[b, ...], m[b, ...], optimize=True
             )
+    elif method == "robust":
+        # When target image size is smaller, it might be faster with `matmul`
+        # but not by much
+        M = np.matmul(R[:, np.newaxis, np.newaxis, ...], m)
     else:
         raise ValueError(f"ERR: {method} is not supported")
 
@@ -121,10 +113,7 @@ def convert_grid(
     else:
         raise ValueError(f"ERR: {method} is not supported")
 
-    # stack the pixel maps into a grid
-    grid = np.stack((uj, ui), axis=-3)
-
-    return grid
+    return np.stack((uj, ui), axis=-3)
 
 
 def run(

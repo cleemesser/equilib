@@ -114,17 +114,16 @@ def create_single_img(
 
     if rand:
         img = (np.random.rand(c, h, w) * 255).astype(dtype)
+    elif c == 1:
+        img = grayscale_gradient(height=h, width=w, dtype=dtype).transpose(
+            2, 0, 1
+        )
+    elif c == 3:
+        img = rgb_gradient(height=h, width=w, dtype=dtype).transpose(
+            2, 0, 1
+        )
     else:
-        if c == 1:
-            img = grayscale_gradient(height=h, width=w, dtype=dtype).transpose(
-                2, 0, 1
-            )
-        elif c == 3:
-            img = rgb_gradient(height=h, width=w, dtype=dtype).transpose(
-                2, 0, 1
-            )
-        else:
-            raise ValueError()
+        raise ValueError()
 
     if dtype in NP_FLOATS:
         img = (img / 255.0).astype(dtype)
@@ -189,15 +188,12 @@ def create_single_grid(
         if rand:
             mx = w * (2 * np.random.rand(1) - 1)
             my = h * (2 * np.random.rand(1) - 1)
-            _xs += mx
-            _ys += my
         else:
             # move to the seam
             mx = w / 2
             my = h / 2
-            _xs += mx
-            _ys += my
-
+        _xs += mx
+        _ys += my
     # wrap around
     _xs %= w
     _ys %= h

@@ -139,7 +139,7 @@ def baseline_cv2(
         "cubic": cv2.INTER_CUBIC,
         "lanczos4": cv2.INTER_LANCZOS4,
     }
-    interp = interp_methods.get(mode, None)
+    interp = interp_methods.get(mode)
     assert interp is not None, f"ERR: {mode} interpolation not supported"
 
     if grid.dtype != np.dtype(np.float32):

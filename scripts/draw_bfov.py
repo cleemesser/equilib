@@ -49,11 +49,7 @@ def draw_lines(
     points = [(x, y) for y, x in points]
 
     for index, point in enumerate(points):
-        if index == len(points) - 1:
-            next_point = points[0]
-        else:
-            next_point = points[index + 1]
-
+        next_point = points[0] if index == len(points) - 1 else points[index + 1]
         if (
             abs(point[0] - next_point[0]) < 100
             and abs(point[1] - next_point[1]) < 100

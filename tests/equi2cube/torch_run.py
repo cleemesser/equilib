@@ -29,14 +29,12 @@ IMG_NAME = "test.jpg"
 
 def get_numpy_img(dtype: np.dtype = np.float32):
     path = os.path.join(IMG_ROOT, IMG_NAME)
-    img = load2numpy(path, dtype=dtype, is_cv2=False)
-    return img
+    return load2numpy(path, dtype=dtype, is_cv2=False)
 
 
 def get_torch_img(dtype: torch.dtype = torch.float32):
     path = os.path.join(IMG_ROOT, IMG_NAME)
-    img = load2torch(path, dtype=dtype, is_cv2=False)
-    return img
+    return load2torch(path, dtype=dtype, is_cv2=False)
 
 
 def make_batch(img, bs: int = 1):
@@ -140,7 +138,7 @@ def bench_cpu(
 
     # evaluation depends on the output format
     # - reformat to np.ndarray?
-    if cube_format in ("horizon", "dice"):
+    if cube_format in {"horizon", "dice"}:
         # can be tested as the same before since `out` is np.ndarray
         numpy_out = torch.from_numpy(numpy_out)
 
@@ -439,7 +437,7 @@ def bench_gpu(
 
     # evaluation depends on the output format
     # - reformat to np.ndarray?
-    if cube_format in ("horizon", "dice"):
+    if cube_format in {"horizon", "dice"}:
         # can be tested as the same before since `out` is np.ndarray
         numpy_out = torch.from_numpy(numpy_out).type(torch_dtype).to(device)
 

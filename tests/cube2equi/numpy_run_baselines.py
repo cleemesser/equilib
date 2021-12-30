@@ -22,8 +22,7 @@ IMG_NAME = "test_horizon.jpg"
 
 def get_img(dtype: np.dtype = np.dtype(np.float32)):
     path = os.path.join(DATA_ROOT, IMG_NAME)
-    img = load2numpy(path, dtype=dtype, is_cv2=False)
-    return img
+    return load2numpy(path, dtype=dtype, is_cv2=False)
 
 
 def make_batch(img: np.ndarray, bs: int = 1):

@@ -27,8 +27,9 @@ def dice2horizon(dices: torch.Tensor) -> torch.Tensor:
     # create a (b, c, h, w) horizon array
     device = get_device(dices)
     horizons = torch.empty(
-        (*dices.shape[0:2], w, w * 6), dtype=dices.dtype, device=device
+        (*dices.shape[:2], w, w * 6), dtype=dices.dtype, device=device
     )
+
 
     # Order: F R B L U D
     sxy = [(1, 1), (2, 1), (3, 1), (0, 1), (1, 0), (1, 2)]
@@ -88,7 +89,7 @@ def convert2horizon(
 
     # FIXME: better typing for mypy...
 
-    if cube_format in ("horizon", "dice"):
+    if cube_format in {"horizon", "dice"}:
         assert isinstance(
             cubemap, torch.Tensor
         ), f"ERR: cubemap {cube_format} needs to be a torch.Tensor"
@@ -229,8 +230,7 @@ def create_equi_grid(
     coor_x = coor_x.repeat(batch, 1, 1)
     coor_y = coor_y.repeat(batch, 1, 1)
 
-    grid = torch.stack((coor_y, coor_x), dim=-3).to(device)
-    return grid
+    return torch.stack((coor_y, coor_x), dim=-3).to(device)
 
 
 def run(
@@ -270,20 +270,18 @@ def run(
         f"incompatible: try {(torch.uint8, torch.float16, torch.float32, torch.float64)}"
     )
 
+    dtype = torch.float32 if horizon_dtype == torch.uint8 else horizon_dtype
     # NOTE: we don't want to use uint8 as output array's dtype yet since
     # floating point calculations (matmul, etc) are faster
     # NOTE: we are also assuming that uint8 is in range of 0-255 (obviously)
     # and float is in range of 0.0-1.0; later we will refine it
     # NOTE: for the sake of consistency, we will try to use the same dtype as horizon
     if horizon.device.type == "cuda":
-        dtype = torch.float32 if horizon_dtype == torch.uint8 else horizon_dtype
         assert dtype in (torch.float16, torch.float32, torch.float64), (
             f"ERR: argument `dtype` is {dtype} which is incompatible:\n"
             f"try {(torch.float16, torch.float32, torch.float64)}"
         )
     else:
-        # NOTE: for cpu, it can't use half-precision
-        dtype = torch.float32 if horizon_dtype == torch.uint8 else horizon_dtype
         assert dtype in (torch.float32, torch.float64), (
             f"ERR: argument `dtype` is {dtype} which is incompatible:\n"
             f"try {(torch.float32, torch.float64)}"

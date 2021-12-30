@@ -81,12 +81,7 @@ def load2torch(
 ) -> torch.Tensor:
 
     assert os.path.exists(img_path), f"{img_path} doesn't exist"
-    if is_cv2:
-        # FIXME: currently only supports RGB
-        img = _open_as_cv2(img_path)
-    else:
-        img = _open_as_PIL(img_path)
-
+    img = _open_as_cv2(img_path) if is_cv2 else _open_as_PIL(img_path)
     # NOTE: Convert dtypes
     # if uint8, keep 0-255
     # if float, convert to 0.0-1.0 (ToTensor)

@@ -94,8 +94,8 @@ def test_against_bench(
         rtol = 1e-5
         atol = 1e-8
 
+    print("\nNEAREST: test vs sampler")
     if fast_test:
-        print("\nNEAREST: test vs sampler")
         out_faster = make_copies(out)
         out_sampler = make_copies(out)
         out_faster = func_timer(faster_nearest)(img, grid, out_faster)
@@ -141,15 +141,7 @@ def test_against_bench(
         err_mse = mse(out_faster, out_sampler)
         err_mae = mae(out_faster, out_sampler)
 
-        print("close?", close)
-        print("MSE", err_mse)
-        print("MAE", err_mae)
-        assert close, "ERR: two arrays were not close"
-        assert err_mse < atol
-        assert err_mae < atol
-
     else:
-        print("\nNEAREST: test vs sampler")
         out_naive = make_copies(out)
         out_sampler = make_copies(out)
         out_naive = func_timer(naive_nearest)(img, grid, out_naive)
@@ -195,13 +187,12 @@ def test_against_bench(
         err_mse = mse(out_naive, out_sampler)
         err_mae = mae(out_naive, out_sampler)
 
-        print("close?", close)
-        print("MSE", err_mse)
-        print("MAE", err_mae)
-
-        assert close, "ERR: two arrays were not close"
-        assert err_mse < atol
-        assert err_mae < atol
+    print("close?", close)
+    print("MSE", err_mse)
+    print("MAE", err_mae)
+    assert close, "ERR: two arrays were not close"
+    assert err_mse < atol
+    assert err_mae < atol
 
 
 @pytest.mark.skipif(cv2 is None, reason="cv2 is None; not installed")

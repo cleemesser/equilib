@@ -25,7 +25,7 @@ def printable_time(name: str, time: float, prec: int = 6) -> str:
     # FIXME: cleaner way of specifying precision?
     # base = "Func:{}:\t{:0." + str(prec) + "f}"
     # s = base.format(name, time)
-    return f"Func: {name}\t" + format(time, f".{str(prec)}f")
+    return f"Func: {name}\t" + format(time, f'.{prec}f')
 
 
 def func_timer(

@@ -88,7 +88,7 @@ def cube2equi(
     # Try and detect which type it is ("numpy" or "torch")
     # FIXME: any cleaner way of detecting?
     _type = None
-    if cube_format in ("dice", "horizon"):
+    if cube_format in {"dice", "horizon"}:
         if isinstance(cubemap, np.ndarray):
             _type = "numpy"
         elif torch.is_tensor(cubemap):
@@ -112,11 +112,10 @@ def cube2equi(
                 _type = "numpy"
             elif isinstance(cubemap[0][0], torch.Tensor):
                 _type = "torch"
-        else:
-            if isinstance(cubemap[0], np.ndarray):
-                _type = "numpy"
-            elif isinstance(cubemap[0], torch.Tensor):
-                _type = "torch"
+        elif isinstance(cubemap[0], np.ndarray):
+            _type = "numpy"
+        elif isinstance(cubemap[0], torch.Tensor):
+            _type = "torch"
     assert _type is not None, "ERR: input type is not numpy or torch"
 
     if _type == "numpy":

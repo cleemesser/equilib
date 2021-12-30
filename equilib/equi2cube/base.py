@@ -103,14 +103,15 @@ def equi2cube(
         raise ValueError
 
     is_single = False
-    if len(equi.shape) == 3 and isinstance(rots, dict):
-        # probably the input was a single image
-        equi = equi[None, ...]
-        rots = [rots]
-        is_single = True
-    elif len(equi.shape) == 3:
-        # probably a grayscale image
-        equi = equi[:, None, ...]
+    if len(equi.shape) == 3:
+        if isinstance(rots, dict):
+            # probably the input was a single image
+            equi = equi[None, ...]
+            rots = [rots]
+            is_single = True
+        else:
+            # probably a grayscale image
+            equi = equi[:, None, ...]
 
     assert isinstance(rots, list), "ERR: rots is not a list"
     if _type == "numpy":

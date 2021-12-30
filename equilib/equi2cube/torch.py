@@ -21,37 +21,27 @@ def cube_hsplits(cube_h: torch.Tensor) -> List[torch.Tensor]:
         cube_h, split_size_or_sections=cube_h.shape[-2], dim=-1
     )
     assert len(splits) == 6
-    assert splits[0].shape == (*cube_h.shape[0:3], cube_h.shape[-2])
+    assert splits[0].shape == (*cube_h.shape[:3], cube_h.shape[-2])
     return splits
 
 
 def cube_h2list(cube_h: torch.Tensor) -> List[List[torch.Tensor]]:
     bs = cube_h.shape[0]
-    cube_lists = []
-    for b in range(bs):
-        cube_lists.append(
-            list(
+    return [list(
                 torch.split(
                     cube_h[b], split_size_or_sections=cube_h.shape[-2], dim=-1
                 )
-            )
-        )
-    return cube_lists
+            ) for b in range(bs)]
 
 
 def cube_h2dict(cube_h: torch.Tensor) -> List[Dict[str, torch.Tensor]]:
     bs = cube_h.shape[0]
     cube_list = cube_hsplits(cube_h)
 
-    cube_dicts = []
-    for b in range(bs):
-        cube_dicts.append(
-            {
+    return [{
                 k: cube_list[i][b].clone()
                 for i, k in enumerate(["F", "R", "B", "L", "U", "D"])
-            }
-        )
-    return cube_dicts
+            } for b in range(bs)]
 
 
 def cube_h2dice(cube_h: torch.Tensor) -> torch.Tensor:
@@ -110,10 +100,7 @@ def convert_grid(
     else:
         raise ValueError(f"ERR: {method} is not supported")
 
-    # stack the pixel maps into a grid
-    grid = torch.stack((uj, ui), dim=-3)
-
-    return grid
+    return torch.stack((uj, ui), dim=-3)
 
 
 def run(
@@ -161,20 +148,18 @@ def run(
         f"incompatible: try {(torch.uint8, torch.float16, torch.float32, torch.float64)}"
     )
 
+    dtype = torch.float32 if equi_dtype == torch.uint8 else equi_dtype
     # NOTE: we don't want to use uint8 as output array's dtype yet since
     # floating point calculations (matmul, etc) are faster
     # NOTE: we are also assuming that uint8 is in range of 0-255 (obviously)
     # and float is in range of 0.0-1.0; later we will refine it
     # NOTE: for the sake of consistency, we will try to use the same dtype as equi
     if equi.device.type == "cuda":
-        dtype = torch.float32 if equi_dtype == torch.uint8 else equi_dtype
         assert dtype in (torch.float16, torch.float32, torch.float64), (
             f"ERR: argument `dtype` is {dtype} which is incompatible:\n"
             f"try {(torch.float16, torch.float32, torch.float64)}"
         )
     else:
-        # NOTE: for cpu, it can't use half-precision
-        dtype = torch.float32 if equi_dtype == torch.uint8 else equi_dtype
         assert dtype in (torch.float32, torch.float64), (
             f"ERR: argument `dtype` is {dtype} which is incompatible:\n"
             f"try {(torch.float32, torch.float64)}"

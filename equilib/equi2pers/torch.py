@@ -101,10 +101,7 @@ def convert_grid(
     else:
         raise ValueError(f"ERR: {method} is not supported")
 
-    # stack the pixel maps into a grid
-    grid = torch.stack((uj, ui), dim=-3)
-
-    return grid
+    return torch.stack((uj, ui), dim=-3)
 
 
 def run(
@@ -155,20 +152,18 @@ def run(
         f"incompatible: try {(torch.uint8, torch.float16, torch.float32, torch.float64)}"
     )
 
+    dtype = torch.float32 if equi_dtype == torch.uint8 else equi_dtype
     # NOTE: we don't want to use uint8 as output array's dtype yet since
     # floating point calculations (matmul, etc) are faster
     # NOTE: we are also assuming that uint8 is in range of 0-255 (obviously)
     # and float is in range of 0.0-1.0; later we will refine it
     # NOTE: for the sake of consistency, we will try to use the same dtype as equi
     if equi.device.type == "cuda":
-        dtype = torch.float32 if equi_dtype == torch.uint8 else equi_dtype
         assert dtype in (torch.float16, torch.float32, torch.float64), (
             f"ERR: argument `dtype` is {dtype} which is incompatible:\n"
             f"try {(torch.float16, torch.float32, torch.float64)}"
         )
     else:
-        # NOTE: for cpu, it can't use half-precision
-        dtype = torch.float32 if equi_dtype == torch.uint8 else equi_dtype
         assert dtype in (torch.float32, torch.float64), (
             f"ERR: argument `dtype` is {dtype} which is incompatible:\n"
             f"try {(torch.float32, torch.float64)}"
@@ -276,20 +271,18 @@ def get_bounding_fov(
         f"incompatible: try {(torch.uint8, torch.float16, torch.float32, torch.float64)}"
     )
 
+    dtype = torch.float32 if equi_dtype == torch.uint8 else equi_dtype
     # NOTE: we don't want to use uint8 as output array's dtype yet since
     # floating point calculations (matmul, etc) are faster
     # NOTE: we are also assuming that uint8 is in range of 0-255 (obviously)
     # and float is in range of 0.0-1.0; later we will refine it
     # NOTE: for the sake of consistency, we will try to use the same dtype as equi
     if equi.device.type == "cuda":
-        dtype = torch.float32 if equi_dtype == torch.uint8 else equi_dtype
         assert dtype in (torch.float16, torch.float32, torch.float64), (
             f"ERR: argument `dtype` is {dtype} which is incompatible:\n"
             f"try {(torch.float16, torch.float32, torch.float64)}"
         )
     else:
-        # NOTE: for cpu, it can't use half-precision
-        dtype = torch.float32 if equi_dtype == torch.uint8 else equi_dtype
         assert dtype in (torch.float32, torch.float64), (
             f"ERR: argument `dtype` is {dtype} which is incompatible:\n"
             f"try {(torch.float32, torch.float64)}"
@@ -327,11 +320,7 @@ def get_bounding_fov(
     # create a pixel map grid
     grid = convert_grid(M=M, h_equi=h_equi, w_equi=w_equi, method="robust")
 
-    bboxs = []
-
-    # top row
-    for out_x in range(width):
-        bboxs.append(grid[:, :, 0, out_x])
+    bboxs = [grid[:, :, 0, out_x] for out_x in range(width)]
 
     # right column
     for out_y in range(height):
