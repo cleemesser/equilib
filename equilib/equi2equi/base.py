@@ -80,14 +80,15 @@ def equi2equi(
         raise ValueError
 
     is_single = False
-    if len(src.shape) == 3 and isinstance(rots, dict):
-        # probably the input was a single image
-        src = src[None, ...]
-        rots = [rots]
-        is_single = True
-    elif len(src.shape) == 3:
-        # probably a grayscale image
-        src = src[:, None, ...]
+    if len(src.shape) == 3:
+        if isinstance(rots, dict):
+            # probably the input was a single image
+            src = src[None, ...]
+            rots = [rots]
+            is_single = True
+        else:
+            # probably a grayscale image
+            src = src[:, None, ...]
 
     assert isinstance(rots, list), "ERR: rots is not a list"
     if _type == "numpy":

@@ -28,8 +28,5 @@ def create_rots_yaw(bs: int = 1, m: Optional[int] = None):
 
 
 def create_rots(bs: int = 1):
-    rots = []
-    for _ in range(bs):
-        rot = {"roll": 0.0, "pitch": 0.0, "yaw": 0.0}
-        rots.append(rot)
-    return rots
+    rot = {"roll": 0.0, "pitch": 0.0, "yaw": 0.0}
+    return [rot for _ in range(bs)]

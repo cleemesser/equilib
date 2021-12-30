@@ -10,8 +10,8 @@ __all__ = ["bicubic"]
 def kernel(s, a):
     out = torch.zeros_like(s)
     s = torch.abs(s)
-    mask1 = torch.logical_and(0 <= s, s <= 1)
-    mask2 = torch.logical_and(1 < s, s <= 2)
+    mask1 = torch.logical_and(s >= 0, s <= 1)
+    mask2 = torch.logical_and(s > 1, s <= 2)
     out[mask1] = (a + 2) * (s[mask1] ** 3) - (a + 3) * (s[mask1] ** 2) + 1
     out[mask2] = (
         a * (s[mask2] ** 3)

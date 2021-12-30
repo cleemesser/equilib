@@ -115,10 +115,7 @@ def convert_grid(
     else:
         raise ValueError(f"ERR: {method} is not supported")
 
-    # stack the pixel maps into a grid
-    grid = np.stack((uj, ui), axis=-3)
-
-    return grid
+    return np.stack((uj, ui), axis=-3)
 
 
 def run(
@@ -288,11 +285,7 @@ def get_bounding_fov(
     # create a pixel map grid
     grid = convert_grid(M=M, h_equi=h_equi, w_equi=w_equi, method="robust")
 
-    bboxs = []
-
-    # top row
-    for out_x in range(width):
-        bboxs.append(grid[:, :, 0, out_x])
+    bboxs = [grid[:, :, 0, out_x] for out_x in range(width)]
 
     # right column
     for out_y in range(height):

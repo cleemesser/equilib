@@ -37,26 +37,25 @@ def convert_size_binary(size_bytes: int) -> str:
 
 def get_obj_size(obj: Any) -> str:
     size_in_bytes = sys.getsizeof(obj)
-    size = convert_size_decimal(size_in_bytes)
-    return size
+    return convert_size_decimal(size_in_bytes)
 
 
 def get_np_size(tensor: np.ndarray, pretty: bool = True) -> str:
     size_in_bytes = tensor.nbytes  # sys.getsizeof(tensor)
-    if pretty:
-        size = convert_size_decimal(size_bytes=size_in_bytes)
-    else:
-        size = str(size_in_bytes)
-    return size
+    return (
+        convert_size_decimal(size_bytes=size_in_bytes)
+        if pretty
+        else str(size_in_bytes)
+    )
 
 
 def get_torch_size(tensor: torch.Tensor, pretty: bool = True) -> str:
     size_in_bytes = tensor.element_size() * tensor.nelement()
-    if pretty:
-        size = convert_size_decimal(size_bytes=size_in_bytes)
-    else:
-        size = str(size_in_bytes)
-    return size
+    return (
+        convert_size_decimal(size_bytes=size_in_bytes)
+        if pretty
+        else str(size_in_bytes)
+    )
 
 
 if __name__ == "__main__":

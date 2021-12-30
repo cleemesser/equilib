@@ -77,7 +77,7 @@ def native(
     grid[..., 0] = norm_ui
     grid[..., 1] = norm_uj
 
-    out = F.grid_sample(
+    return F.grid_sample(
         img,
         grid,
         mode=mode,
@@ -86,8 +86,6 @@ def native(
         # padding mode defaults to 'zeros' and there is no 'wrapping' mode
         padding_mode="reflection",
     )
-
-    return out
 
 
 # aliases

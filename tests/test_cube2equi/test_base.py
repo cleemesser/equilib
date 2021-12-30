@@ -22,10 +22,10 @@ SAVE_ROOT = "tests/test_cube2equi/results"
 
 
 def create_single_numpy_input(cube_format: str, dtype: np.dtype = np.float32):
-    if cube_format in ("horizon", "dice"):
+    if cube_format in {"horizon", "dice"}:
         img_path = os.path.join(IMG_ROOT, f"test_{cube_format}.jpg")
         img = load2numpy(img_path, dtype=dtype, is_cv2=False)
-    elif cube_format in ("dict", "list"):
+    elif cube_format in {"dict", "list"}:
         img_paths = os.path.join(IMG_ROOT, "test_dict_{k}.jpg")
         img = {}
         for k in ("F", "R", "B", "L", "U", "D"):
@@ -44,11 +44,11 @@ def create_batch_numpy_input(
     dtype: np.dtype = np.float32,
 ):
     imgs = []
-    for i in range(batch_size):
+    for _ in range(batch_size):
         img = create_single_numpy_input(cube_format, dtype=dtype)
         imgs.append(img)
 
-    if cube_format in ("horizon", "dice"):
+    if cube_format in {"horizon", "dice"}:
         imgs = np.empty((len(imgs), *imgs[0].shape), dtype=imgs[0].dtype)
         for i, img in enumerate(imgs):
             imgs[i, ...] = img
@@ -58,10 +58,10 @@ def create_batch_numpy_input(
 def create_single_torch_input(
     cube_format: str, dtype: torch.dtype = torch.float32
 ):
-    if cube_format in ("horizon", "dice"):
+    if cube_format in {"horizon", "dice"}:
         img_path = os.path.join(IMG_ROOT, f"test_{cube_format}.jpg")
         img = load2torch(img_path, dtype=dtype, is_cv2=False)
-    elif cube_format in ("dict", "list"):
+    elif cube_format in {"dict", "list"}:
         img_paths = os.path.join(IMG_ROOT, "test_dict_{k}.jpg")
         img = {}
         for k in ("F", "R", "B", "L", "U", "D"):
@@ -80,11 +80,11 @@ def create_batch_torch_input(
     dtype: torch.dtype = torch.float32,
 ):
     imgs = []
-    for i in range(batch_size):
+    for _ in range(batch_size):
         img = create_single_torch_input(cube_format, dtype=dtype)
         imgs.append(img)
 
-    if cube_format in ("horizon", "dice"):
+    if cube_format in {"horizon", "dice"}:
         imgs = torch.empty((len(imgs), *imgs[0].shape), dtype=imgs[0].dtype)
         for i, img in enumerate(imgs):
             imgs[i, ...] = img

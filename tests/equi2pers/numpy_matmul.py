@@ -29,13 +29,11 @@ np.random.seed(0)
 
 
 def RG_baseline_v1(R, G):
-    C = R @ G
-    return C
+    return R @ G
 
 
 def RG_einsum(R, G):
-    C = np.einsum("bik,kj->bij", R, G, optimize=True)
-    return C
+    return np.einsum("bik,kj->bij", R, G, optimize=True)
 
 
 """C = R @ G, m
@@ -68,20 +66,17 @@ def Cm_naive_v2(C, m):
 
 
 def Cm_baseline_v1(C, m):
-    M = np.matmul(C[:, np.newaxis, np.newaxis, ...], m)
-    return M
+    return np.matmul(C[:, np.newaxis, np.newaxis, ...], m)
 
 
 def Cm_baseline_v2(C, m):
-    M = C[:, np.newaxis, np.newaxis, ...] @ m
-    return M
+    return C[:, np.newaxis, np.newaxis, ...] @ m
 
 
 def Cm_einsum_v1(C, m):
     """Testing out einsum, but this method is the slowest, but the closest to baseline"""
-    M = np.einsum("bik,bhwkj->bhwij", C, m, optimize=True)
     # M = np.einsum("bik,b...kj->b...ij", C, m, optimize=True)
-    return M
+    return np.einsum("bik,bhwkj->bhwij", C, m, optimize=True)
 
 
 def Cm_einsum_v2(C, m):
@@ -119,8 +114,7 @@ def Cm_trasposed(C, m):
     mT = m.transpose((0, 1, 2, 4, 3)).copy()
 
     MT = mT @ CT[:, np.newaxis, np.newaxis, ...]
-    M = MT.transpose((0, 1, 2, 4, 3)).copy()
-    return M
+    return MT.transpose((0, 1, 2, 4, 3)).copy()
 
 
 """R, G, m
@@ -139,14 +133,12 @@ def naive_v1(R, G, m):
 
 def baseline_v1(R, G, m):
     """Slower than np.matmul"""
-    M = R[:, np.newaxis, np.newaxis, ...] @ G @ m
-    return M
+    return R[:, np.newaxis, np.newaxis, ...] @ G @ m
 
 
 def baseline_v2(R, G, m):
     """Fastest out of basic numpy function"""
-    M = np.matmul(np.matmul(R, G)[:, np.newaxis, np.newaxis, ...], m)
-    return M
+    return np.matmul(np.matmul(R, G)[:, np.newaxis, np.newaxis, ...], m)
 
 
 def baseline_v3(R, G, m):
@@ -160,8 +152,7 @@ def baseline_v3(R, G, m):
 
 def einsum_v1(R, G, m):
     """Becomes slower when batch size is high, always slower than v2"""
-    M = np.einsum("bik,kj,bhwjl->bhwil", R, G, m, optimize=True)
-    return M
+    return np.einsum("bik,kj,bhwjl->bhwil", R, G, m, optimize=True)
 
 
 def einsum_v2(R, G, m):
@@ -194,7 +185,7 @@ def einsum_v3(R, G, m):
 
 def gen_rand_rots(batch: int):
     rots = []
-    for b in range(batch):
+    for _ in range(batch):
         # create random rots in radians
         rot = {
             "roll": 2 * np.pi * np.random.random_sample() - np.pi,

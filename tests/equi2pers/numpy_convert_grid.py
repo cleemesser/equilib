@@ -87,8 +87,7 @@ def refine_v1(phi, theta, h_equi, w_equi):
     uj = np.where(uj < 0, uj + h_equi, uj)
     uj = np.where(uj >= h_equi, uj - h_equi, uj)
 
-    grid = np.stack((uj, ui), axis=-3)
-    return grid
+    return np.stack((uj, ui), axis=-3)
 
 
 def refine_v2(phi, theta, h_equi, w_equi):
@@ -97,20 +96,14 @@ def refine_v2(phi, theta, h_equi, w_equi):
     ui %= w_equi
     uj %= h_equi
 
-    grid = np.stack((uj, ui), axis=-3)
-    return grid
+    return np.stack((uj, ui), axis=-3)
 
 
 def refine_v3(phi, theta, h_equi, w_equi):
     """A little bit slower than v2"""
     ui = (((theta - np.pi) * w_equi / (2 * np.pi)) + 0.5) % w_equi
     uj = (((phi - np.pi / 2) * h_equi / np.pi) + 0.5) % h_equi
-    # this method might be faster?
-    # ui = (theta / (2 * np.pi) - 0.5) * w_equi + 0.5
-    # uj = (phi / np.pi - 0.5) * h_equi + 0.5
-
-    grid = np.stack((uj, ui), axis=-3)
-    return grid
+    return np.stack((uj, ui), axis=-3)
 
 
 def refine_v4(phi, theta, h_equi, w_equi):
@@ -133,8 +126,7 @@ def refine_v4(phi, theta, h_equi, w_equi):
     uj = np.where(uj < 0, uj % h_equi, uj)
     uj = np.where(uj >= h_equi, uj % h_equi, uj)
 
-    grid = np.stack((uj, ui), axis=-3)
-    return grid
+    return np.stack((uj, ui), axis=-3)
 
 
 """Benchmarking

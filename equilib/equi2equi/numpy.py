@@ -10,11 +10,7 @@ from equilib.numpy_utils import create_normalized_grid, create_rotation_matrices
 
 def matmul(m: np.ndarray, R: np.ndarray, method: str = "faster") -> np.ndarray:
 
-    if method == "robust":
-        # When target image size is smaller, it might be faster with `matmul`
-        # but not by much
-        M = np.matmul(R[:, np.newaxis, np.newaxis, ...], m)
-    elif method == "faster":
+    if method == "faster":
         # `einsum` is probably fastest, but it might not be accurate
         # I've tested it, and it's really close when it is float64,
         # but loses precision for float32
@@ -26,6 +22,10 @@ def matmul(m: np.ndarray, R: np.ndarray, method: str = "faster") -> np.ndarray:
             M[b, ...] = np.einsum(
                 "ik,...kj->...ij", R[b, ...], m[b, ...], optimize=True
             )
+    elif method == "robust":
+        # When target image size is smaller, it might be faster with `matmul`
+        # but not by much
+        M = np.matmul(R[:, np.newaxis, np.newaxis, ...], m)
     else:
         raise ValueError(f"ERR: {method} is not supported")
 
@@ -68,10 +68,7 @@ def convert_grid(
     else:
         raise ValueError(f"ERR: {method} is not supported")
 
-    # stack the pixel maps into a grid
-    grid = np.stack((uj, ui), axis=-3)
-
-    return grid
+    return np.stack((uj, ui), axis=-3)
 
 
 def run(

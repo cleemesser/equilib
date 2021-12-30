@@ -22,7 +22,7 @@ def dice2horizon(dices: np.ndarray) -> np.ndarray:
     assert dices.shape[-2] == w * 3 and dices.shape[-1] == w * 4
 
     # create a (b, c, h, w) horizon array
-    horizons = np.empty((*dices.shape[0:2], w, w * 6), dtype=dices.dtype)
+    horizons = np.empty((*dices.shape[:2], w, w * 6), dtype=dices.dtype)
 
     # Order: F R B L U D
     sxy = [(1, 1), (2, 1), (3, 1), (0, 1), (1, 0), (1, 2)]
@@ -76,7 +76,7 @@ def convert2horizon(
 
     # FIXME: better typing for mypy...
 
-    if cube_format in ("horizon", "dice"):
+    if cube_format in {"horizon", "dice"}:
         assert isinstance(
             cubemap, np.ndarray
         ), f"ERR: cubemap {cube_format} needs to be a np.ndarray"

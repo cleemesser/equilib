@@ -50,12 +50,12 @@ def postprocess(
         img = np.asarray(img.to("cpu").numpy() * 255, dtype=np.uint8)
         img = np.transpose(img, (1, 2, 0))
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-        return img
     else:
         to_PIL = transforms.Compose([transforms.ToPILImage()])
         img = img.to("cpu")
         img = to_PIL(img)
-        return img
+
+    return img
 
 
 def test_video(path: str) -> None:
